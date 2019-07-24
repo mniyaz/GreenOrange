@@ -1,4 +1,4 @@
-package com.example.vechicletracker.Activity;
+package com.aottec.arkotgps.Activity;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -16,16 +16,16 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.example.vechicletracker.Fragment.AlarmFragment;
-import com.example.vechicletracker.Fragment.SettingsFragment;
-import com.example.vechicletracker.Fragment.TrackingFragment;
-import com.example.vechicletracker.Model.DrawerObjectResponseModel;
-import com.example.vechicletracker.NavigationAdaptor;
-import com.example.vechicletracker.R;
-import com.example.vechicletracker.Util.APIClient;
-import com.example.vechicletracker.Util.ApiInterface;
-import com.example.vechicletracker.Util.AppConstants;
-import com.example.vechicletracker.Util.GlobalValues;
+import com.aottec.arkotgps.Fragment.AlarmFragment;
+import com.aottec.arkotgps.Fragment.SettingsFragment;
+import com.aottec.arkotgps.Model.DrawerObjectResponseModel;
+import com.aottec.arkotgps.NavigationAdaptor;
+import com.aottec.arkotgps.Util.AppConstants;
+import com.aottec.arkotgps.Util.GlobalValues;
+import com.aottec.arkotgps.Fragment.TrackingFragment;
+import com.aottec.arkotgps.R;
+import com.aottec.arkotgps.Util.APIClient;
+import com.aottec.arkotgps.Util.ApiInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         for(DrawerObjectResponseModel d: data){
             //or use .equal(text) with you want equal match
             //use .toLowerCase() for better matches
-            if(d.getName().contains(text)){
+            if(d.getName().toUpperCase().contains(text.toUpperCase())){
                 temp.add(d);
             }
         }

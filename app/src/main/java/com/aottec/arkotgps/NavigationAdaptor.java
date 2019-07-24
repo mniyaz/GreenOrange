@@ -1,4 +1,4 @@
-package com.example.vechicletracker;
+package com.aottec.arkotgps;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,14 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.vechicletracker.Model.DrawerObjectResponseModel;
-import com.example.vechicletracker.Util.AppConstants;
+import com.aottec.arkotgps.Model.DrawerObjectResponseModel;
+import com.aottec.arkotgps.Util.AppConstants;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class NavigationAdaptor extends RecyclerView.Adapter<NavigationAdaptor.ViewHolder>{
     Context context;
