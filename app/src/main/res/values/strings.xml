@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VechicleTracker</string>
-    <string name="title_activity_splash">SplashActivity</string>
+    <string name="app_name">arkOT GPS</string>
+    <string name="title_activity_splash">arkOT GPS</string>
     <string name="title_activity_login">LoginActivity</string>
 </resources>

@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.vechicletracker.R;
+import com.aottec.arkotgps.R;
 
 public class AlarmFragment extends Fragment {
     @Nullable
