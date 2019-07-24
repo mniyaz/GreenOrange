@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
@@ -19,6 +20,7 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,13 +150,16 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
                 }
         });
 
+        float bitmapWidth = getResources().getDimension(R.dimen.bitmapWidth);
+        float bitmapHeight = getResources().getDimension(R.dimen.bitmapHeight);
+
         {
             if ( mGoogleMap!= null) {
                 mGoogleMap.clear();
                 Bitmap smallMarker = null;
                 BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_navigation_icon_moving);
                 Bitmap b = bitmapdraw.getBitmap();
-                smallMarker = Bitmap.createScaledBitmap(b, 100, 100, false);
+                smallMarker = Bitmap.createScaledBitmap(b, Math.round(bitmapWidth), Math.round(bitmapHeight), false);
                 myMarker = mGoogleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
                         .title("").icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
@@ -175,6 +180,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         });
 
     }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
