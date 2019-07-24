@@ -8,7 +8,6 @@
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/navigation"
         android:layout_marginBottom="-163dp" />
 
 
@@ -16,8 +15,8 @@
         android:id="@+id/toolbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tint="@color/colorAccent"
         android:layout_margin="30dp"
+        android:maxWidth="20dp"
         android:src="@drawable/ic_round_car"/>
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

@@ -10,7 +10,7 @@
         android:layout_height="40dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="35dp"
-        android:src="@drawable/car_image"
+        android:src="@drawable/ic_car"
         android:visibility="visible" />
 
     <TextView
