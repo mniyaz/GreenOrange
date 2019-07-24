@@ -25,6 +25,7 @@ import com.example.vechicletracker.R;
 import com.example.vechicletracker.Util.APIClient;
 import com.example.vechicletracker.Util.ApiInterface;
 import com.example.vechicletracker.Util.AppConstants;
+import com.example.vechicletracker.Util.GlobalValues;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView ivRefresh;
     private EditText searchField;
     private ArrayList<DrawerObjectResponseModel> data = new ArrayList<>();
+    GlobalValues globalValues;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initializeView();
         initializeNavigationView();
-
+        globalValues=new GlobalValues(this);
         setOnClickListener();
         getDrawerObject();
 
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getDrawerObject() {
         ApiInterface apiService = APIClient.getClient().create(ApiInterface.class);
-        String xapi = CommonUtil.userApiKey;
+        String xapi = globalValues.getString("api_key");
 
 
         Map<String, String> mapdata = new HashMap<>();

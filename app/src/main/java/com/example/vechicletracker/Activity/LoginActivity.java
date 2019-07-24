@@ -77,8 +77,8 @@ public class LoginActivity extends AppCompatActivity {
                 String s = String.valueOf(response);
                 if (response.isSuccessful()) {
                     if (response.body().getStatus().equals("Success")) {
-                        CommonUtil.userApiKey = response.body().getApi_key();
                         globalValues.put("loginStatus", "true");
+                        globalValues.put("api_key", response.body().getApi_key());
                         Intent i = new Intent(LoginActivity.this,MainActivity.class);
 
                         startActivity(i);

@@ -25,11 +25,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.vechicletracker.Activity.MainActivity;
 import com.example.vechicletracker.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,6 +42,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
@@ -48,7 +51,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         com.google.android.gms.location.LocationListener {
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private SupportMapFragment mMapFragment;
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 4;
@@ -64,6 +67,8 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
     private GoogleMap mGoogleMap;
     private Marker myMarker;
     private Location mCurrentLocation;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Location mLastLocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,8 +80,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
             mMapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
             mMapFragment.getMapAsync(this);
         } else {
-            GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
-
+            GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
         }
         mRequestingLocationUpdates = false;
         initGoogleApiClient();
@@ -92,7 +96,15 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
             return;
         }
         if (mCurrentLocation == null) {
-            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        mCurrentLocation = location;
+                        mLastLocation = location;
+                    }
+                }
+            });
             //updateUI();
             // getInitialService(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
         }
@@ -126,9 +138,16 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation!=null)
+
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                    if (location != null) {
+                        mLastLocation = location;
+                    }
+                }
+        });
+
         {
             if ( mGoogleMap!= null) {
                 mGoogleMap.clear();
@@ -168,6 +187,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
 
     }
     private void initGoogleApiClient() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
