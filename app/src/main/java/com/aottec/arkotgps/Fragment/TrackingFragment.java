@@ -8,11 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -35,6 +38,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -149,14 +153,10 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         {
             if ( mGoogleMap!= null) {
                 mGoogleMap.clear();
-                Bitmap smallMarker = null;
-                BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_navigation_icon_moving);
-                Bitmap b = bitmapdraw.getBitmap();
-                smallMarker = Bitmap.createScaledBitmap(b, Math.round(bitmapWidth), Math.round(bitmapHeight), false);
-                myMarker = mGoogleMap.addMarker(new MarkerOptions()
+                myMarker = mGoogleMap.addMarker(new MarkerOptions().flat(true)
                         .position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
-                        .title("").icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-
+                        .title("").icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_arrow_green)));
+                myMarker.setRotation(mLastLocation.getBearing());
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 14.0f));
             }
         }
@@ -174,6 +174,16 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
 
     }
 
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, @DrawableRes int vectorDrawableResourceId) {
+        Drawable background = ContextCompat.getDrawable(context, R.drawable.ic_arrow_green);
+        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
+        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        background.draw(canvas);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -377,8 +387,6 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         if (mGoogleApiClient.isConnected())
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (com.google.android.gms.location.LocationListener) this);
     }
-
-
 
 }
 
