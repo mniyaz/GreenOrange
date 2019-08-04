@@ -114,6 +114,18 @@ public class MainActivity extends AppCompatActivity {
                                 AppConstants.selectedPosition = position;
                                 navigationAdaptor.notifyDataSetChanged();
                                 drawer.closeDrawer(Gravity.LEFT);
+
+                                toolbar.setVisibility(View.VISIBLE);
+                                TrackingFragment trackingFragment = new TrackingFragment();
+                                Bundle bundle=new Bundle();
+                                bundle.putInt("clickablePosition",position);
+                                trackingFragment.setArguments(bundle);
+
+
+                                android.support.v4.app.FragmentManager fragmentManager1 = getSupportFragmentManager();
+                                android.support.v4.app.FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
+                                fragmentTransaction1.replace(R.id.content_frame, trackingFragment);
+                                fragmentTransaction1.commit();
                             }
                         });
 

@@ -22,12 +22,24 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aottec.arkotgps.Activity.MainActivity;
+import com.aottec.arkotgps.Model.DrawerObjectResponseModel;
+import com.aottec.arkotgps.NavigationAdaptor;
 import com.aottec.arkotgps.R;
+import com.aottec.arkotgps.Util.APIClient;
+import com.aottec.arkotgps.Util.ApiInterface;
+import com.aottec.arkotgps.Util.AppConstants;
+import com.aottec.arkotgps.Util.GlobalValues;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -45,6 +57,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class TrackingFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener {
@@ -56,7 +76,11 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
             UPDATE_INTERVAL_IN_MILLISECONDS / 4;
     private GoogleMap googleMap;
     private GoogleApiClient mGoogleApiClient;
+    GlobalValues globalValues;
     private LocationRequest mLocationRequest;
+    Marker myMarker;
+
+    Boolean flag = true;
     private Boolean mRequestingLocationUpdates;
     boolean isGPSEnabled = false;
     private AlertDialog.Builder alertDialog;
@@ -64,10 +88,14 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
     private boolean isGetLocationInfo;
     private boolean Storelocation = false;
     private GoogleMap mGoogleMap;
-    private Marker myMarker;
+
     private Location mCurrentLocation;
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLastLocation;
+    private TextView txtVechicleName, txtPlateNumber, txtSimNumber;
+    private ArrayList<DrawerObjectResponseModel> vechicleList;
+    private HashMap<Marker, Integer> mHashMap = new HashMap<Marker, Integer>();
+    private int selectedDrawablePosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,6 +110,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
             GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
         }
         mRequestingLocationUpdates = false;
+        globalValues = new GlobalValues(getActivity());
         initGoogleApiClient();
         createLocationRequest();
         startUpdatesButtonHandler();
@@ -91,7 +120,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission((Activity)getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission((Activity) getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         if (mCurrentLocation == null) {
@@ -141,37 +170,104 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                    if (location != null) {
-                        mLastLocation = location;
-                    }
+                if (location != null) {
+                    mLastLocation = location;
                 }
+            }
         });
 
         float bitmapWidth = getResources().getDimension(R.dimen.bitmapWidth);
         float bitmapHeight = getResources().getDimension(R.dimen.bitmapHeight);
 
-        {
-            if ( mGoogleMap!= null) {
+        if (flag) {
+            if (mGoogleMap != null) {
                 mGoogleMap.clear();
-                myMarker = mGoogleMap.addMarker(new MarkerOptions().flat(true)
-                        .position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()))
-                        .title("").icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_arrow_green)));
-                myMarker.setRotation(mLastLocation.getBearing());
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 14.0f));
+                getMapData();
             }
+            flag = false;
         }
-         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-               // int position = (int)(marker.getTag());
+                int position = mHashMap.get(myMarker);
                 BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
                 dialog.setContentView(R.layout.bottom_sheet_dialog);
                 dialog.show();
+                txtVechicleName = dialog.findViewById(R.id.text_product_name);
+                txtPlateNumber = dialog.findViewById(R.id.text_street);
+                txtSimNumber = dialog.findViewById(R.id.text_pincode);
+                txtVechicleName.setText(vechicleList.get(position).getName());
+                txtPlateNumber.setText(vechicleList.get(position).getPlate_number());
+                txtSimNumber.setText(vechicleList.get(position).getSim_number());
                 //Using position get Value from arraylist
                 return false;
             }
         });
 
+    }
+
+    private void getMapData() {
+        ApiInterface apiService = APIClient.getClient().create(ApiInterface.class);
+        String xapi = globalValues.getString("api_key");
+
+
+        Map<String, String> mapdata = new HashMap<>();
+        mapdata.put("key", xapi);
+        mapdata.put("ver", "3.9");
+        Call<ArrayList<DrawerObjectResponseModel>> call = apiService.calluserObject(mapdata);
+        call.enqueue(new Callback<ArrayList<DrawerObjectResponseModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<DrawerObjectResponseModel>> call, Response<ArrayList<DrawerObjectResponseModel>> response) {
+
+                String s = String.valueOf(response);
+                if (isAdded()) {
+                    if (response.isSuccessful()) {
+                        if (response.body().size() > 0) {
+                            vechicleList = new ArrayList<DrawerObjectResponseModel>();
+                            vechicleList = response.body();
+                            Bitmap smallMarker = null;
+                            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_navigation_icon_moving);
+                            Bitmap b = bitmapdraw.getBitmap();
+                            smallMarker = Bitmap.createScaledBitmap(b, 100, 100, false);
+                            for (int i = 0; i < response.body().size(); i++) {
+                                if (getArguments() == null) {
+
+
+                                    myMarker = mGoogleMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(Double.valueOf(response.body().get(i).getLat()), Double.valueOf(response.body().get(i).getLng())))
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                    mHashMap.put(myMarker, i);
+                                } else {
+                                    if (getArguments().getInt("clickablePosition") == i) {
+                                      selectedDrawablePosition=i;
+                                        myMarker = mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(new LatLng(Double.valueOf(response.body().get(i).getLat()), Double.valueOf(response.body().get(i).getLng())))
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                        mHashMap.put(myMarker, i);
+                                    }
+                                }
+
+                            }
+                        }
+                        if (getArguments() == null) {
+                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(response.body().get(0).getLat()), Double.valueOf(response.body().get(0).getLng())), 14.0f));
+                        } else {
+                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(response.body().get(selectedDrawablePosition).getLat()), Double.valueOf(response.body().get(selectedDrawablePosition).getLng())), 14.0f));
+                        }
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<DrawerObjectResponseModel>> call, Throwable t) {
+                //  progressBar.setVisibility(View.GONE);
+                String error = String.valueOf(call);
+            }
+
+
+        });
     }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, @DrawableRes int vectorDrawableResourceId) {
@@ -195,6 +291,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         mGoogleMap = googleMap;
 
     }
+
     private void initGoogleApiClient() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -203,12 +300,14 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
                 .addApi(LocationServices.API)
                 .build();
     }
+
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
+
     private void startUpdatesButtonHandler() {
 
         if (!isPlayServicesAvailable(getActivity())) return;
@@ -259,6 +358,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         }
 
     }
+
     public void showSettingsAlert(final Activity activity) {
 
         alertDialog = new android.app.AlertDialog.Builder(
@@ -286,6 +386,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         alertDialog.show();
 
     }
+
     private void startLocationUpdates() {
 
 
@@ -298,6 +399,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
 
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -317,6 +419,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
             }
         }
     }
+
     private void showRationaleDialog() {
         new android.app.AlertDialog.Builder(getActivity())
                 .setPositiveButton("To give permission", new DialogInterface.OnClickListener() {
@@ -381,6 +484,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
             dismissDialog.cancel();
         }
     }
+
     protected void stopLocationUpdates() {
 
 
