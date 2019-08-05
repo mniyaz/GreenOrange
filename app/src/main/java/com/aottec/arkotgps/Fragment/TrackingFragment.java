@@ -57,6 +57,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -210,7 +212,6 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         ApiInterface apiService = APIClient.getClient().create(ApiInterface.class);
         String xapi = globalValues.getString("api_key");
 
-
         Map<String, String> mapdata = new HashMap<>();
         mapdata.put("key", xapi);
         mapdata.put("ver", "3.9");
@@ -235,14 +236,16 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
 
                                     myMarker = mGoogleMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(Double.valueOf(response.body().get(i).getLat()), Double.valueOf(response.body().get(i).getLng())))
-                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                            .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_arrow_green)));
+                                    myMarker.setRotation(Integer.parseInt(response.body().get(i).getAngle()));
                                     mHashMap.put(myMarker, i);
                                 } else {
                                     if (getArguments().getInt("clickablePosition") == i) {
                                       selectedDrawablePosition=i;
                                         myMarker = mGoogleMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(Double.valueOf(response.body().get(i).getLat()), Double.valueOf(response.body().get(i).getLng())))
-                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                                .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_arrow_green)));
+                                        myMarker.setRotation(Integer.parseInt(response.body().get(i).getAngle()));
                                         mHashMap.put(myMarker, i);
                                     }
                                 }
