@@ -239,10 +239,6 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
                         if (response.body().size() > 0) {
                             vechicleList = new ArrayList<DrawerObjectResponseModel>();
                             vechicleList = response.body();
-                            Bitmap smallMarker = null;
-                            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_navigation_icon_moving);
-                            Bitmap b = bitmapdraw.getBitmap();
-                            smallMarker = Bitmap.createScaledBitmap(b, 100, 100, false);
 
                             for (int i = 0; i < response.body().size(); i++) {
                                 if (getArguments() == null) {
@@ -250,7 +246,8 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
 
                                     myMarker = mGoogleMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(Double.valueOf(response.body().get(i).getLat()), Double.valueOf(response.body().get(i).getLng())))
-                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                                .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_arrow_green)));
+                                    myMarker.setRotation(Integer.parseInt(response.body().get(i).getAngle()));
                                     mHashMap.put(myMarker, i);
                                 }
 
@@ -265,7 +262,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
                     }else
                     {
 //change here lat and long which move to center positio
-                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(response.body().get(0).getLat()), Double.valueOf(response.body().get(0).getLng())), 14.0f));
+                        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(response.body().get(0).getLat()), Double.valueOf(response.body().get(0).getLng())), 14.0f));
 
                     }
 
@@ -285,7 +282,17 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
     }
 
 
-
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, @DrawableRes  int vectorDrawableResourceId) {
+        Drawable background = ContextCompat.getDrawable(context, vectorDrawableResourceId);
+        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
+        vectorDrawable.setBounds(40, 20, vectorDrawable.getIntrinsicWidth() + 40, vectorDrawable.getIntrinsicHeight() + 20);
+        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        background.draw(canvas);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
