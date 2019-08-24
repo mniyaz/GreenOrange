@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -32,8 +33,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.aottec.arkotgps.Activity.LoginActivity;
 import com.aottec.arkotgps.Activity.MainActivity;
 import com.aottec.arkotgps.Model.DrawerObjectResponseModel;
+import com.aottec.arkotgps.Model.LoginResponseModel;
 import com.aottec.arkotgps.NavigationAdaptor;
 import com.aottec.arkotgps.R;
 import com.aottec.arkotgps.Util.APIClient;
@@ -56,8 +60,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -183,8 +185,17 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
 
         if (flag) {
             if (mGoogleMap != null) {
-                mGoogleMap.clear();
-                getMapData();
+
+                final Handler ha=new Handler();
+                ha.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        getMapData();
+                        ha.postDelayed(this, 10000);
+
+                    }
+                }, 100);
+
             }
             flag = false;
         }
@@ -209,8 +220,10 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
     }
 
     private void getMapData() {
+        mGoogleMap.clear();
         ApiInterface apiService = APIClient.getClient().create(ApiInterface.class);
         String xapi = globalValues.getString("api_key");
+
 
         Map<String, String> mapdata = new HashMap<>();
         mapdata.put("key", xapi);
@@ -230,41 +243,39 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
                             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_navigation_icon_moving);
                             Bitmap b = bitmapdraw.getBitmap();
                             smallMarker = Bitmap.createScaledBitmap(b, 100, 100, false);
+
                             for (int i = 0; i < response.body().size(); i++) {
                                 if (getArguments() == null) {
 
 
                                     myMarker = mGoogleMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(Double.valueOf(response.body().get(i).getLat()), Double.valueOf(response.body().get(i).getLng())))
-                                            .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_arrow_green)));
-                                    myMarker.setRotation(Integer.parseInt(response.body().get(i).getAngle()));
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                                     mHashMap.put(myMarker, i);
-                                } else {
-                                    if (getArguments().getInt("clickablePosition") == i) {
-                                      selectedDrawablePosition=i;
-                                        myMarker = mGoogleMap.addMarker(new MarkerOptions()
-                                                .position(new LatLng(Double.valueOf(response.body().get(i).getLat()), Double.valueOf(response.body().get(i).getLng())))
-                                                .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_arrow_green)));
-                                        myMarker.setRotation(Integer.parseInt(response.body().get(i).getAngle()));
-                                        mHashMap.put(myMarker, i);
-                                    }
                                 }
 
                             }
-                        }
-                        if (getArguments() == null) {
-                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(response.body().get(0).getLat()), Double.valueOf(response.body().get(0).getLng())), 14.0f));
-                        } else {
-                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(response.body().get(selectedDrawablePosition).getLat()), Double.valueOf(response.body().get(selectedDrawablePosition).getLng())), 14.0f));
+
                         }
 
                     }
-                }
+                    if(globalValues.has("storedLat"))
+                    {
+                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(globalValues.getString("storedLat")), Double.valueOf(globalValues.getString("storedLong"))), 14.0f));
+                    }else
+                    {
+//change here lat and long which move to center positio
+                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(response.body().get(0).getLat()), Double.valueOf(response.body().get(0).getLng())), 14.0f));
 
+                    }
+
+                }
             }
 
+
+
             @Override
-            public void onFailure(Call<ArrayList<DrawerObjectResponseModel>> call, Throwable t) {
+            public void onFailure (Call < ArrayList < DrawerObjectResponseModel >> call, Throwable t){
                 //  progressBar.setVisibility(View.GONE);
                 String error = String.valueOf(call);
             }
@@ -273,16 +284,8 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         });
     }
 
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context, @DrawableRes int vectorDrawableResourceId) {
-        Drawable background = ContextCompat.getDrawable(context, R.drawable.ic_arrow_green);
-        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
-        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        background.draw(canvas);
-        vectorDrawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

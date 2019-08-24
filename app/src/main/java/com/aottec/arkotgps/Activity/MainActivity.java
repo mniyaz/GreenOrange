@@ -113,13 +113,13 @@ public class MainActivity extends AppCompatActivity {
                             public void onListClick(int position) {
                                 AppConstants.selectedPosition = position;
                                 navigationAdaptor.notifyDataSetChanged();
+                                globalValues.put("storedLat",data.get(position).getLat());
+                                globalValues.put("storedLong",data.get(position).getLng());
                                 drawer.closeDrawer(Gravity.LEFT);
 
                                 toolbar.setVisibility(View.VISIBLE);
                                 TrackingFragment trackingFragment = new TrackingFragment();
-                                Bundle bundle=new Bundle();
-                                bundle.putInt("clickablePosition",position);
-                                trackingFragment.setArguments(bundle);
+
 
 
                                 android.support.v4.app.FragmentManager fragmentManager1 = getSupportFragmentManager();
