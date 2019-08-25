@@ -1,4 +1,4 @@
-package com.aottec.arkotgps;
+package com.aottec.arkot.gps;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.aottec.arkotgps.Model.DrawerObjectResponseModel;
-import com.aottec.arkotgps.Util.AppConstants;
-import com.aottec.arkotgps.Util.GlobalValues;
+import com.aottec.arkot.gps.Model.DrawerObjectResponseModel;
+import com.aottec.arkot.gps.Util.AppConstants;
+import com.aottec.arkot.gps.Util.GlobalValues;
 
 import java.util.ArrayList;
 

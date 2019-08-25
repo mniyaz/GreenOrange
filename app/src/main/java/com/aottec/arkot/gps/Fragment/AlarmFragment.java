@@ -1,4 +1,4 @@
-package com.aottec.arkotgps.Fragment;
+package com.aottec.arkot.gps.Fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,7 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aottec.arkotgps.R;
+import com.aottec.arkot.gps.R;
+
 
 public class AlarmFragment extends Fragment {
     @Nullable

@@ -1,4 +1,4 @@
-package com.aottec.arkotgps.Util;
+package com.aottec.arkot.gps.Util;
 
 
 import java.util.concurrent.TimeUnit;

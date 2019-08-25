@@ -1,8 +1,8 @@
-package com.aottec.arkotgps.Util;
+package com.aottec.arkot.gps.Util;
 
 
-import com.aottec.arkotgps.Model.DrawerObjectResponseModel;
-import com.aottec.arkotgps.Model.LoginResponseModel;
+import com.aottec.arkot.gps.Model.DrawerObjectResponseModel;
+import com.aottec.arkot.gps.Model.LoginResponseModel;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -21,6 +21,9 @@ public interface ApiInterface {
 
     @GET
     Call<LoginResponseModel> callLogin(@Url String url);
+
+    @GET
+    Call<LoginResponseModel> upDateFCM(@Url String url);
 
 
 }

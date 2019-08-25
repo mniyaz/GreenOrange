@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
 
-    tools:context=".Activity.SplashActivity">
+    tools:context=".gps.Activity.SplashActivity">
 
     <ImageView
         android:layout_width="wrap_content"

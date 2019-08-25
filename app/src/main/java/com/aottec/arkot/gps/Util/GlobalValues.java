@@ -1,4 +1,4 @@
-package com.aottec.arkotgps.Util;
+package com.aottec.arkot.gps.Util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

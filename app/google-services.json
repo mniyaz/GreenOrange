@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "634261918395",
+    "firebase_url": "https://greenorange-tms.firebaseio.com",
+    "project_id": "greenorange-tms",
+    "storage_bucket": "greenorange-tms.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634261918395:android:5ecb49420fa05708",
+        "android_client_info": {
+          "package_name": "com.aottec.arkot.gps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634261918395-fb7d0b6m2sp2u9jcmoaac474n8m2gbus.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrTyYJ8IPJr070Zi3UJTqX9ZCBkXXJ-Mc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634261918395-fb7d0b6m2sp2u9jcmoaac474n8m2gbus.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634261918395:android:bb9bdea834197c59",
+        "android_client_info": {
+          "package_name": "com.itransport.tms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634261918395-r9u7l4jl81igv073cskt1d7df0egd0vp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.itransport.tms",
+            "certificate_hash": "1c08a51400d9ff8240e24b4245e345f4b19f6d0b"
+          }
+        },
+        {
+          "client_id": "634261918395-fb7d0b6m2sp2u9jcmoaac474n8m2gbus.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrTyYJ8IPJr070Zi3UJTqX9ZCBkXXJ-Mc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634261918395-fb7d0b6m2sp2u9jcmoaac474n8m2gbus.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634261918395:android:78cb9a5b419e5a36",
+        "android_client_info": {
+          "package_name": "mobantica.com.transportsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634261918395-fb7d0b6m2sp2u9jcmoaac474n8m2gbus.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrTyYJ8IPJr070Zi3UJTqX9ZCBkXXJ-Mc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634261918395-fb7d0b6m2sp2u9jcmoaac474n8m2gbus.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

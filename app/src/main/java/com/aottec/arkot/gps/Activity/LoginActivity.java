@@ -1,4 +1,4 @@
-package com.aottec.arkotgps.Activity;
+package com.aottec.arkot.gps.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,11 +7,13 @@ import android.view.View;
 import android.widget.EditText;
 
 
-import com.aottec.arkotgps.Model.LoginResponseModel;
-import com.aottec.arkotgps.Util.GlobalValues;
-import com.aottec.arkotgps.R;
-import com.aottec.arkotgps.Util.APIClient;
-import com.aottec.arkotgps.Util.ApiInterface;
+import com.aottec.arkot.gps.Model.LoginResponseModel;
+import com.aottec.arkot.gps.R;
+import com.aottec.arkot.gps.Util.GlobalValues;
+
+import com.aottec.arkot.gps.Util.APIClient;
+import com.aottec.arkot.gps.Util.ApiInterface;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,11 +67,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     if (response.body().getStatus().equals("Success")) {
                         globalValues.put("loginStatus", "true");
+                      CommonUtil.ApiKey=response.body().getApi_key();
                         globalValues.put("api_key", response.body().getApi_key());
-                        Intent i = new Intent(LoginActivity.this,MainActivity.class);
+                        callFcmTokenWebservice();
 
-                        startActivity(i);
-                        finish();
                     } else {
                         editEmail.setError("Wrong username or password");
                     }
@@ -88,6 +89,45 @@ public class LoginActivity extends AppCompatActivity {
 
 
         });
+    }
+
+    private void callFcmTokenWebservice() {
+        ApiInterface apiService = APIClient.getClient().create(ApiInterface.class);
+        String xapi = CommonUtil.ApiKey;
+
+
+        String URL = "api.php?api=user&ver=3.9&key="+xapi+"&cmd="+"FSM_KEY,"+editEmail.getText().toString()+","+ FirebaseInstanceId.getInstance().getId();
+        Call<LoginResponseModel> call = apiService.upDateFCM(URL );
+        call.enqueue(new Callback<LoginResponseModel>() {
+            @Override
+            public void onResponse(Call<LoginResponseModel> call, Response<LoginResponseModel> response) {
+
+                String s = String.valueOf(response);
+                if (response.isSuccessful()) {
+                    if (response.body().getStatus().equals("Success")) {
+                        Intent i = new Intent(LoginActivity.this,MainActivity.class);
+                        startActivity(i);
+                        finish();
+
+                    } else {
+                        //editEmail.setError("Wrong username or password");
+                    }
+                } else {
+                   // editEmail.setError("Wrong username or password");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponseModel> call, Throwable t) {
+                //  progressBar.setVisibility(View.GONE);
+                String error = String.valueOf(call);
+            }
+
+
+        });
+
     }
 
 

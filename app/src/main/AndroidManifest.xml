@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.aottec.arkotgps">
+    package="com.aottec.arkot.gps">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,12 +14,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+        <service
+            android:name="com.aottec.arkot.gps.Notification.MyFirebaseMessagingService"
+            >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.aottec.arkot.gps.Notification.MyFirebaseInstanceIDService"
+            >
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
         <activity
-            android:name=".Activity.LoginActivity"
+            android:name="com.aottec.arkot.gps.Activity.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".Activity.SplashActivity"
+            android:name="com.aottec.arkot.gps.Activity.SplashActivity"
             android:label="@string/title_activity_splash"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

@@ -1,4 +1,4 @@
-package com.aottec.arkotgps.Fragment;
+package com.aottec.arkot.gps.Fragment;
 
 import android.Manifest;
 import android.app.Activity;
@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -23,10 +22,6 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,16 +29,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.aottec.arkotgps.Activity.LoginActivity;
-import com.aottec.arkotgps.Activity.MainActivity;
-import com.aottec.arkotgps.Model.DrawerObjectResponseModel;
-import com.aottec.arkotgps.Model.LoginResponseModel;
-import com.aottec.arkotgps.NavigationAdaptor;
-import com.aottec.arkotgps.R;
-import com.aottec.arkotgps.Util.APIClient;
-import com.aottec.arkotgps.Util.ApiInterface;
-import com.aottec.arkotgps.Util.AppConstants;
-import com.aottec.arkotgps.Util.GlobalValues;
+import com.aottec.arkot.gps.Model.DrawerObjectResponseModel;
+
+import com.aottec.arkot.gps.R;
+import com.aottec.arkot.gps.Util.APIClient;
+import com.aottec.arkot.gps.Util.ApiInterface;
+import com.aottec.arkot.gps.Util.GlobalValues;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;

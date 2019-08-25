@@ -1,4 +1,4 @@
-package com.aottec.arkotgps.Model;
+package com.aottec.arkot.gps.Model;
 
 import java.util.List;
 

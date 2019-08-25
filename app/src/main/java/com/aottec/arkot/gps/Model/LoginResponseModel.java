@@ -1,4 +1,4 @@
-package com.aottec.arkotgps.Model;
+package com.aottec.arkot.gps.Model;
 
 public class LoginResponseModel {
     /**
