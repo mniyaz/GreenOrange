@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onListClick(int position) {
                                 if (globalValues.has("selectedVechicle")) {
-                                    if (globalValues.getString("selectedVechicle").equals(data.get(position).getName())) {
+                                    if (globalValues.getString("selectedVechicle").equals(data.get(position).getImei())) {
                                         globalValues.remove("selectedVechicle");
                                         navigationAdaptor.notifyDataSetChanged();
                                         globalValues.remove("storedLat");
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                                         fragmentTransaction1.replace(R.id.content_frame, trackingFragment);
                                         fragmentTransaction1.commit();
                                     } else {
-                                        globalValues.put("selectedVechicle", data.get(position).getName());
+                                        globalValues.put("selectedVechicle", data.get(position).getImei());
                                         navigationAdaptor.notifyDataSetChanged();
                                         globalValues.put("storedLat", data.get(position).getLat());
                                         globalValues.put("storedLong", data.get(position).getLng());

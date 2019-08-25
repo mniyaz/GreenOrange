@@ -47,6 +47,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -55,6 +56,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -215,7 +217,6 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
     }
 
     private void getMapData() {
-        mGoogleMap.clear();
         myMarker=null;
         ApiInterface apiService = APIClient.getClient().create(ApiInterface.class);
         String xapi = globalValues.getString("api_key");
@@ -235,14 +236,16 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
                         if (response.body().size() > 0) {
                             vechicleList = new ArrayList<DrawerObjectResponseModel>();
                             vechicleList = response.body();
-
+                            mGoogleMap.clear();
                             for (int i = 0; i < response.body().size(); i++) {
                                 if (getArguments() == null) {
 
                                     if(globalValues.getString("selectedVechicle").equals(response.body().get(i).getImei())){
                                         globalValues.put("storedLat", response.body().get(i).getLat());
                                         globalValues.put("storedLong", response.body().get(i).getLng());
+                                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(globalValues.getString("storedLat")), Double.valueOf(globalValues.getString("storedLong"))), 14.0f));
                                     }
+
                                     myMarker = mGoogleMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(Double.valueOf(response.body().get(i).getLat()), Double.valueOf(response.body().get(i).getLng())))
                                                 .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_arrow_green)));
@@ -257,7 +260,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
                     }
                     if(globalValues.has("storedLat"))
                     {
-                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(globalValues.getString("storedLat")), Double.valueOf(globalValues.getString("storedLong"))), 14.0f));
+
                     }else
                     {
 //change here lat and long which move to center positio
@@ -279,7 +282,6 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
 
         });
     }
-
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, @DrawableRes  int vectorDrawableResourceId) {
         Drawable background = ContextCompat.getDrawable(context, vectorDrawableResourceId);

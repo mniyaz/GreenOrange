@@ -52,6 +52,11 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        //do nothing
+    }
+
     private void callLoginService() {
         ApiInterface apiService = APIClient.getClient().create(ApiInterface.class);
         String xapi = CommonUtil.ApiKey;
