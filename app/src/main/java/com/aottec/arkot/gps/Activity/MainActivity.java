@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                                         fragmentTransaction1.commit();
                                     }
                                 } else {
-                                    globalValues.put("selectedVechicle", data.get(position).getName());
+                                    globalValues.put("selectedVechicle", data.get(position).getImei());
                                     navigationAdaptor.notifyDataSetChanged();
                                     globalValues.put("storedLat", data.get(position).getLat());
                                     globalValues.put("storedLong", data.get(position).getLng());

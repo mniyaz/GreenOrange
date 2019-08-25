@@ -239,7 +239,10 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
                             for (int i = 0; i < response.body().size(); i++) {
                                 if (getArguments() == null) {
 
-
+                                    if(globalValues.getString("selectedVechicle").equals(response.body().get(i).getImei())){
+                                        globalValues.put("storedLat", response.body().get(i).getLat());
+                                        globalValues.put("storedLong", response.body().get(i).getLng());
+                                    }
                                     myMarker = mGoogleMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(Double.valueOf(response.body().get(i).getLat()), Double.valueOf(response.body().get(i).getLng())))
                                                 .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_arrow_green)));
