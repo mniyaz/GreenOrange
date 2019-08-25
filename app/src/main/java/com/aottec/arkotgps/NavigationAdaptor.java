@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.aottec.arkotgps.Model.DrawerObjectResponseModel;
 import com.aottec.arkotgps.Util.AppConstants;
+import com.aottec.arkotgps.Util.GlobalValues;
 
 import java.util.ArrayList;
 
@@ -18,10 +19,13 @@ public class NavigationAdaptor extends RecyclerView.Adapter<NavigationAdaptor.Vi
     Context context;
     ArrayList<DrawerObjectResponseModel> vechicleList;
     AddClickEvent onClickListener;
+    GlobalValues globalValues;
     public NavigationAdaptor(Context context, ArrayList<DrawerObjectResponseModel> vechicleList) {
     this.context=context;
     this.vechicleList=vechicleList;
+        globalValues=new GlobalValues(context);
         AppConstants.selectedPosition = -1;
+       // AppConstants.selectedVechicle="";
 
     }
     public interface AddClickEvent {
@@ -56,7 +60,7 @@ public class NavigationAdaptor extends RecyclerView.Adapter<NavigationAdaptor.Vi
             }
         });
 
-        viewHolder.checkBox.setChecked(position == AppConstants.selectedPosition);
+        viewHolder.checkBox.setChecked(vechicleList.get(position).getName().equals(globalValues.getString("selectedVechicle")));
     }
 
     @Override

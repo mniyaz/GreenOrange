@@ -1,5 +1,6 @@
 package com.aottec.arkotgps.Activity;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aottec.arkotgps.Fragment.AlarmFragment;
 import com.aottec.arkotgps.Fragment.SettingsFragment;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText searchField;
     private ArrayList<DrawerObjectResponseModel> data = new ArrayList<>();
     GlobalValues globalValues;
+    private TextView txtlogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initializeView();
         initializeNavigationView();
-        globalValues=new GlobalValues(this);
+        globalValues = new GlobalValues(this);
         setOnClickListener();
         getDrawerObject();
 
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     if (response.body().size() > 0) {
                         recyclerDrawerObject.setVisibility(View.VISIBLE);
                         data = response.body();
-                        navigationAdaptor = new NavigationAdaptor(MainActivity.this,data );
+                        navigationAdaptor = new NavigationAdaptor(MainActivity.this, data);
                         recyclerDrawerObject.setHasFixedSize(true);
                         recyclerDrawerObject.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                         recyclerDrawerObject.setAdapter(navigationAdaptor);
@@ -111,21 +114,54 @@ public class MainActivity extends AppCompatActivity {
                         navigationAdaptor.setAddClickListener(new NavigationAdaptor.AddClickEvent() {
                             @Override
                             public void onListClick(int position) {
-                                AppConstants.selectedPosition = position;
-                                navigationAdaptor.notifyDataSetChanged();
-                                globalValues.put("storedLat",data.get(position).getLat());
-                                globalValues.put("storedLong",data.get(position).getLng());
-                                drawer.closeDrawer(Gravity.LEFT);
+                                if (globalValues.has("selectedVechicle")) {
+                                    if (globalValues.getString("selectedVechicle").equals(data.get(position).getName())) {
+                                        globalValues.remove("selectedVechicle");
+                                        navigationAdaptor.notifyDataSetChanged();
+                                        globalValues.remove("storedLat");
+                                        globalValues.remove("storedLong");
+                                        drawer.closeDrawer(Gravity.LEFT);
 
-                                toolbar.setVisibility(View.VISIBLE);
-                                TrackingFragment trackingFragment = new TrackingFragment();
+                                        toolbar.setVisibility(View.VISIBLE);
+                                        TrackingFragment trackingFragment = new TrackingFragment();
 
 
+                                        android.support.v4.app.FragmentManager fragmentManager1 = getSupportFragmentManager();
+                                        android.support.v4.app.FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
+                                        fragmentTransaction1.replace(R.id.content_frame, trackingFragment);
+                                        fragmentTransaction1.commit();
+                                    } else {
+                                        globalValues.put("selectedVechicle", data.get(position).getName());
+                                        navigationAdaptor.notifyDataSetChanged();
+                                        globalValues.put("storedLat", data.get(position).getLat());
+                                        globalValues.put("storedLong", data.get(position).getLng());
+                                        drawer.closeDrawer(Gravity.LEFT);
 
-                                android.support.v4.app.FragmentManager fragmentManager1 = getSupportFragmentManager();
-                                android.support.v4.app.FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
-                                fragmentTransaction1.replace(R.id.content_frame, trackingFragment);
-                                fragmentTransaction1.commit();
+                                        toolbar.setVisibility(View.VISIBLE);
+                                        TrackingFragment trackingFragment = new TrackingFragment();
+
+
+                                        android.support.v4.app.FragmentManager fragmentManager1 = getSupportFragmentManager();
+                                        android.support.v4.app.FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
+                                        fragmentTransaction1.replace(R.id.content_frame, trackingFragment);
+                                        fragmentTransaction1.commit();
+                                    }
+                                } else {
+                                    globalValues.put("selectedVechicle", data.get(position).getName());
+                                    navigationAdaptor.notifyDataSetChanged();
+                                    globalValues.put("storedLat", data.get(position).getLat());
+                                    globalValues.put("storedLong", data.get(position).getLng());
+                                    drawer.closeDrawer(Gravity.LEFT);
+
+                                    toolbar.setVisibility(View.VISIBLE);
+                                    TrackingFragment trackingFragment = new TrackingFragment();
+
+
+                                    android.support.v4.app.FragmentManager fragmentManager1 = getSupportFragmentManager();
+                                    android.support.v4.app.FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
+                                    fragmentTransaction1.replace(R.id.content_frame, trackingFragment);
+                                    fragmentTransaction1.commit();
+                                }
                             }
                         });
 
@@ -171,12 +207,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    void filter(String text){
+    void filter(String text) {
         ArrayList<DrawerObjectResponseModel> temp = new ArrayList();
-        for(DrawerObjectResponseModel d: data){
+        for (DrawerObjectResponseModel d : data) {
             //or use .equal(text) with you want equal match
             //use .toLowerCase() for better matches
-            if(d.getName().toUpperCase().contains(text.toUpperCase())){
+            if (d.getName().toUpperCase().contains(text.toUpperCase())) {
                 temp.add(d);
             }
         }
@@ -192,6 +228,16 @@ public class MainActivity extends AppCompatActivity {
         searchField = findViewById(R.id.searchField);
         toolbar = findViewById(R.id.toolbar);
         content_frame = findViewById(R.id.content_frame);
+        txtlogout = findViewById(R.id.logout);
+        txtlogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                globalValues.clear();
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
 
     }
 

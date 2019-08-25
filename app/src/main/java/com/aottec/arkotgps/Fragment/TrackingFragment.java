@@ -180,8 +180,7 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
             }
         });
 
-        float bitmapWidth = getResources().getDimension(R.dimen.bitmapWidth);
-        float bitmapHeight = getResources().getDimension(R.dimen.bitmapHeight);
+
 
         if (flag) {
             if (mGoogleMap != null) {
@@ -202,25 +201,31 @@ public class TrackingFragment extends Fragment implements OnMapReadyCallback, Go
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                int position = mHashMap.get(myMarker);
-                BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
-                dialog.setContentView(R.layout.bottom_sheet_dialog);
-                dialog.show();
-                txtVechicleName = dialog.findViewById(R.id.text_product_name);
-                txtPlateNumber = dialog.findViewById(R.id.text_street);
-                txtSimNumber = dialog.findViewById(R.id.text_pincode);
-                txtVechicleName.setText(vechicleList.get(position).getName());
-                txtPlateNumber.setText(vechicleList.get(position).getPlate_number());
-                txtSimNumber.setText(vechicleList.get(position).getSim_number());
-                //Using position get Value from arraylist
+                if (myMarker != null) {
+                    int position = mHashMap.get(myMarker);
+                    BottomSheetDialog dialog = new BottomSheetDialog(getActivity());
+                    dialog.setContentView(R.layout.bottom_sheet_dialog);
+                    dialog.show();
+                    txtVechicleName = dialog.findViewById(R.id.text_product_name);
+                    txtPlateNumber = dialog.findViewById(R.id.text_street);
+                    txtSimNumber = dialog.findViewById(R.id.text_pincode);
+                    txtVechicleName.setText(vechicleList.get(position).getName());
+                    txtPlateNumber.setText(vechicleList.get(position).getPlate_number());
+                    txtSimNumber.setText(vechicleList.get(position).getSim_number());
+                    //Using position get Value from arraylist
+
+
+                }
                 return false;
             }
+
         });
 
     }
 
     private void getMapData() {
         mGoogleMap.clear();
+        myMarker=null;
         ApiInterface apiService = APIClient.getClient().create(ApiInterface.class);
         String xapi = globalValues.getString("api_key");
 
